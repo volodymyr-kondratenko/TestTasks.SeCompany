@@ -41,7 +41,6 @@ internal sealed class PhotographyCostParametersRepository : IPhotographyCostPara
             IncreaseCostWithinMinutes = _configuration.GetSection("IncreaseCostWithinMinutes").Get<int>(),
             IncreaseCostWithinMultiplier = _configuration.GetSection("IncreaseCostWithinMultiplier").Get<double>(),
             HolidayWorkCostMultiplier = _configuration.GetSection("HolidayWorkCostMultiplier").Get<double>(),
-            UbnormalTimePhotographerCost = _configuration.GetSection("UbnormalTimePhotographerCost").Get<int>(),
             PhotographerDayMaxCost = _configuration.GetSection("PhotographerDayMaxCost").Get<double>(),
             TimeCosts = _configuration.GetSection("PhotographerTimeCosts").Get<PhotographerTimeCost[]>()!,
             Holidays = Map(configurationHolidays!)

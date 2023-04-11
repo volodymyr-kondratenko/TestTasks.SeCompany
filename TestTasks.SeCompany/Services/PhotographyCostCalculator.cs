@@ -23,7 +23,7 @@ internal sealed class PhotographyCostCalculator : IPhotographyCostCalculator
         {
             if (_photographyCostParameters == null)
                 _photographyCostParameters = _photographyCostParametersRepository.Get();
-            
+
             return _photographyCostParameters!;
         }
     }
@@ -99,20 +99,21 @@ internal sealed class PhotographyCostCalculator : IPhotographyCostCalculator
     private double GetCostInternal(Booking booking)
     {
         PhotographerTimeCost[] timeCosts = PhotographyCostParameters.TimeCosts;
-        var bookingTime = TimeOnly.FromDateTime(booking.DateTimeUtc);
+        var bookingTimeStart = TimeOnly.FromDateTime(booking.DateTimeUtc);
+        var bookingTimeEnd = bookingTimeStart.Add(booking.Duration);
 
         double finalCost = default;
         foreach (PhotographerTimeCost timeCost in timeCosts)
         {
-            if (bookingTime.IsBetween(timeCost.StartTime, timeCost.EndTime))
-                finalCost = timeCost.CostPerHour;
+            long workIntervalTicks =
+                Math.Min(timeCost.EndTime.Ticks, bookingTimeEnd.Ticks)
+                - Math.Max(timeCost.StartTime.Ticks, bookingTimeStart.Ticks);
+            if (workIntervalTicks > 0)
+                finalCost += new TimeSpan(workIntervalTicks).TotalHours * timeCost.CostPerHour;
         }
 
-        if (finalCost == default)
-            finalCost = PhotographyCostParameters.UbnormalTimePhotographerCost;
-
         if (IsHoliday(booking.DateTimeUtc))
-            return finalCost * PhotographyCostParameters.HolidayWorkCostMultiplier;
+            finalCost *= PhotographyCostParameters.HolidayWorkCostMultiplier;
 
         return finalCost;
     }

@@ -11,8 +11,6 @@ internal sealed class PhotographyCostParameters
 
     public required double HolidayWorkCostMultiplier { get; init; }
 
-    public required int UbnormalTimePhotographerCost { get; init; }
-
     public required double PhotographerDayMaxCost { get; init; }
 
     public required PhotographerTimeCost[] TimeCosts { get; init; }
